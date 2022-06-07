@@ -19,9 +19,25 @@ router.post("/createbook",async function(req, res)  {
     res.send({msg:savedData})
 })
 
-router.get("/getbookData", async function(req,res){
-    let allUsers =await UserModel.find()
+router.get("/bookList", async function(req,res){
+    let allUsers =await UserModel.find().select({ bookName: 1, authorName: 1, _id: 0})
     res.send({msg:allUsers})
 })
+
+router.get("/getBooksInYear", async function(req,res){
+    let allUsers2 =await UserModel.find({year:2022})
+    res.send({msg:allUsers2})
+})
+
+router.get("/getRandomBooks", async function(req,res){
+    let allUsers4 =await UserModel.find({totalPages: { $gt:500 }  })
+    res.send({msg:allUsers4})
+})
+
+router.get("/getXINRBooks", async function(req,res){
+    let allUsers3 =await UserModel.find({$or: [ {"indianPrice" :"100INR" } , {  "indianPrice" :"200INR"} , { "indianPrice" :"500INR"}]})
+    res.send({msg:allUsers3})
+})
+
 
 module.exports = router;
