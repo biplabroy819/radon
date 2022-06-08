@@ -1,15 +1,63 @@
-// const UserModel= require("../models/userModel")
+const BooksModel= require("../models/booksModel")
+const AuthorModel= require("../models/authorModel")
 
-// const createUser= async function (req, res) {
-//     let data= req.body
-//     let savedData= await UserModel.create(data)
-//     res.send({msg: savedData})
-// }
 
-// const getUsersData= async function (req, res) {
-//     let allUsers= await UserModel.find()
-//     res.send({msg: allUsers})
-// }
+const createAuthors= async function (req, res) {
+    let data= req.body
+    let allAthor= await AuthorModel.create(data)
+    res.send({msg: allAthor})
+}
 
-// module.exports.createUser= createUser
-// module.exports.getUsersData= getUsersData
+
+
+const createBooks = async function (req, res) {
+    let data2= req.body
+    let allBooks= await BooksModel.create(data2)
+    res.send({msg: allBooks})
+}
+
+const getBooksbyChetanBhagat = async function (req, res) {
+    let data = await AuthorModel.find({author_name :"Chetan Bhagat"}).select("author_id")
+    let bookData = await BooksModel.find({author_id :data[0].author_id})
+    res.send({msg :bookData})
+}
+const authorOfBook = async function (req, res) {
+    let data = await BooksModel.findOneAndUpdate({name :"Two states"},{$set :{prices:100}},{new:true})
+    let authorData =await AuthorModel.find({author_id:data.author_id}).select("author_name")
+    let price =data.prices
+    res.send({msg:authorData, price})
+}
+
+const  bookBetween = async function(req,res){
+    let data = await BooksModel.find({price:{$gte:50,$lte:100}}).select({author_id:1})
+    let authorData =await AuthorModel.find()
+
+}
+
+module.exports.createAuthors= createAuthors
+module.exports.createBooks=createBooks 
+module.exports.getBooksbyChetanBhagat=getBooksbyChetanBhagat 
+module.exports.authorOfBook=authorOfBook 
+module.exports.bookBetween=bookBetween 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
