@@ -6,10 +6,18 @@ const createAuthor= async function (req, res) {
     res.send({data: authorCreated})
 }
 
-const getAuthorsData= async function (req, res) {
-    let authors = await AuthorModel.find()
-    res.send({data: authors})
-}
 
 module.exports.createAuthor= createAuthor
-module.exports.getAuthorsData= getAuthorsData
+
+
+
+
+
+
+
+
+// const getAuthorsData= async function (req, res) {
+    //     let authors = await AuthorModel.find()
+    //     res.send({data: authors})
+    // }
+    // module.exports.getAuthorsData= getAuthorsData
