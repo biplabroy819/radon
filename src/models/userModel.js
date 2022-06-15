@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema( {
     },
     emailId: String,
     password: String,
+    isDeleted:false,
     gender: {
         type: String,
         enum: ["male", "female", "other"]
@@ -18,3 +19,4 @@ const userSchema = new mongoose.Schema( {
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema)
+
