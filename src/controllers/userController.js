@@ -5,15 +5,20 @@ const createUser = async function (abcd, xyz) {
   //You can name the req, res objects anything.
   //but the first parameter is always the request 
   //the second parameter is always the response
-  let data = abcd.body;
-  let savedData = await userModel.create(data);
-  // console.log(abcd.newAtribute);
-  xyz.send({ msg: savedData });
-};
+  try{
+    let data = abcd.body;
+    let savedData = await userModel.create(data);
+    xyz.status(200).send({ msg: savedData });
+  } catch(error){
+    xyz.status(500).send({msg:"Error",error:error.message})
+  }
+  };
 
 
 
 const loginUser = async function (req, res) {
+  try{
+
   let userName = req.body.emailId;
   let password = req.body.password;
 
@@ -39,7 +44,10 @@ const loginUser = async function (req, res) {
     "functionup-radon"
   );
   res.setHeader("x-auth-token", token);
-  res.send({ status: true, token: token });
+  res.send({ status: true, data: token });
+  }catch(err){
+    res.status(5000).send(err.message)
+  }
 };
 
 
