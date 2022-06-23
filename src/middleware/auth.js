@@ -5,10 +5,9 @@ var dToken
 
 const authentication =function(req,res,next){
     try{
-  let token = req.headers["X-Auth-Key"];
-    if (!token) token = req.headers["x-auth-key"];
+  let token = req.headers["X-Api-Key"];
+    if (!token) token = req.headers["x-api-key"];
     if (!token) return res.status(401).send({ status: false, msg: "token must be present" });
-    console.log(token);
      dToken = jwt.verify(token, "project1-group10");
     if (!dToken){
       return res.status(400).send({ status: false, msg: "token is invalid" })}
@@ -22,7 +21,7 @@ const authentication =function(req,res,next){
   }
 
 
-  const Authorisation = async function (req, res, next) {
+  const Authorisation = async function (req, res,next) {
     try{
     let presentPrams = req.params
     if (!presentPrams) presentPrams = req.query
@@ -30,6 +29,7 @@ const authentication =function(req,res,next){
     if (presentPrams.blogId)
         if (!mongoose.isValidObjectId(presentPrams.blogId))
             return res.status(400).send({ status: false, msg: "invalid blogId" })
+    let         
     if(presentPrams.authorId)        
     if (!mongoose.isValidObjectId(presentPrams.authorId))
         return res.status(400).send({ status: false, msg: "invalid authorId" })
@@ -37,8 +37,9 @@ const authentication =function(req,res,next){
     if (!authorId) return res.status(404).send({ status: false, msg: "NoT found" })
     if (dToken.authorId != authorId.authorId)
         return res.status(401).send({ status: false, msg: "unauthorised" })
+     
 
-    next()
+    next(authorId)
 }catch(err){
   res.status(500).send({msg:"server Error",err:err.message})
 }
