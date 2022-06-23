@@ -135,19 +135,22 @@ const deleteBlogById=async function(req,res){
 
 const deleteBlogByParams=async function(req,res){
    try{
-      console.log(req)
-      let token= req.hea
+     let token = req.headers["X-Api-Key"];
+      if (!token) token = req.headers["x-api-key"]
+
       let  getobject=req.query
       let  getData = await blogModel.find(getobject,{isDeleted:false})
       if(getData.length==0){
       return res.status(404).send({status: false,msg: "no such Blog"})
      }
-     let dToken = jwt.verify(token, "project1-group10");
+     let dToken = jwt.verify(token, "project1-group10")
       
      let  updateData= await blogModel.updateMany(
-      {$and:[getobject,dToken.authorId]},
+      {$and:[{authorId:dToken.authorId},getobject]},
+
       {$set:{isDeleted:true,deletedAt:Date.now()}},
       {new:true})
+      console.log(getobject)
       res.status(200).send({msg:updateData})
    }
 catch(err){
