@@ -14,7 +14,8 @@ const blogSchema = new mongoose.Schema( {
     authorId:{
         type: ObjectId,
         ref : 'Author',
-        trim: true
+        trim: true,
+        required:true
     },
     tags:[String],
     category:{
@@ -36,8 +37,12 @@ const blogSchema = new mongoose.Schema( {
         default:false,
         trim: true
     },
-    deletedAt: Date,
-    publishedAt: Date
+    deletedAt: {
+      type:Date
+    },
+    publishedAt: {
+        type:Date
+    }
 
   
 }, { timestamps: true });
