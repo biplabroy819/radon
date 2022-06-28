@@ -18,7 +18,7 @@ const authentication = function (req, res, next) {
     next();
   }
   catch (error) {
-    res.status(500).send({ msg: "Error", error: error.message })
+    res.status(500).send({ status:false, msg: error.message })
   }
 }
 
@@ -39,21 +39,23 @@ const Authorisation = async function (req, res, next) {
 
     let auth
     if (!presentPrams.blogId) {
-      auth = await blogModel.findOne(presentPrams).select({ _id: 0, authorId: 1 })
-
+      auth = await blogModel.find({$and:[{authorId:dToken.authorId},presentPrams]}).select({ _id: 0, authorId: 1 })
+      if(auth.keys()==-1)
+      return res.status(404).send({status:false,msg:"unautorised"})
     } else {
-      auth = await blogModel.findById({ _id: presentPrams.blogId }).select({ _id: 0, authorId: 1 })
-
+      auth = await blogModel.findById({_id: presentPrams.blogId }).select({_id: 0, authorId: 1 })
+      if (!auth) return res.status(404).send({ status: false, msg: "NoT found" })
+      if(dToken.authorId!=auth.authorId)
+      return res.status(404).send({status:false,msg:"unautorised"})
     }
+    console.log(dToken.authorId,auth)
 
-    if (!auth) return res.status(404).send({ status: false, msg: "NoT found" })
-
-    if (dToken.authorId != auth.authorId)
-      return res.status(401).send({ status: false, msg: "unauthorised" })
+    // if (dToken.authorId.include(Object.values(auth)))
+    //   return res.status(401).send({ status: false, msg: "unauthorised" })
 
     next()
   } catch (err) {
-    res.status(500).send({ msg: "server Error", err: err.message })
+    res.status(500).send({ status:false, msg: err.message })
 
   }
 }

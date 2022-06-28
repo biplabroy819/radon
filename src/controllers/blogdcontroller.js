@@ -48,11 +48,11 @@ const createAuthor = async function (req, res) {
 
       let saveData = await authorModel.create(data)
 
-      res.status(201).send({ msg: saveData })
+      res.status(201).send({ status:true, data: saveData })
 
    } catch (err) {
 
-      res.status(500).send({ msg: "Error", error: err.message })
+      res.status(500).send({ status:false, msg: err.message })
    }
 }
 
@@ -99,10 +99,10 @@ const createBlog = async function (req, res) {
 
       let saveData = await blogModel.create(data)
 
-      res.status(201).send({ msg: saveData })
+      res.status(201).send({ status:true, data: saveData })
    } catch (err) {
 
-      res.status(500).send({ msg: "Error", error: err.message })
+      res.status(500).send({ status:false, msg: err.message })
    }
 }
 
@@ -142,7 +142,7 @@ const loginAuthor = async function (req, res) {
       res.status(200).send({ status: true, data: token });
    } catch (err) {
       console.log("This is the error :", err.message)
-      res.status(500).send({ msg: "Error", error: err.message })
+      res.status(500).send({ status:false, msg:err.message })
    }
 }
 
@@ -153,10 +153,10 @@ const getBlog = async function (req, res) {
       let query = req.query
       let allBlogs = await blogModel.find({ $and: [query, { isDeleted: false, isPublished: true }] })
       if (allBlogs.length == 0) return res.status(404).send({ msg: "no such blog" })
-      res.status(200).send({ msg: allBlogs })
+      res.status(200).send({ status:true, data: allBlogs })
    }
    catch (error) {
-      res.status(500).send({ msg: "error in server", err: error.message })
+      res.status(500).send({ status:false, msg: error.message })
    }
 
 }
@@ -187,10 +187,10 @@ const updateBlog = async function (req, res) {
       }, {
          new: true
       })
-      res.status(201).send({ status: true, msg: updateBlog })
+      res.status(201).send({ status: true, data: updateBlog })
    }
    catch (err) {
-      res.status(500).send({ msg: "error in server", err: err.message })
+      res.status(500).send({ status:false, msg: err.message })
    }
 }
 
@@ -209,7 +209,7 @@ const deleteBlogById = async function (req, res) {
       }
    }
    catch (err) {
-      res.status(500).send({ msg: "server issue", error: err.message })
+      res.status(500).send({ status:false, msg: err.message })
    }
 }
 
@@ -218,19 +218,20 @@ const deleteBlogByParams = async function (req, res) {
    try {
 
       let getobject = req.query
-      let getData = await blogModel.find(getobject, { isDeleted: false })
-      if (getData.length == 0) {
-         return res.status(404).send({ status: false, msg: "no such Blog" })
-      }
+      // let getData = await blogModel.find({$and:[getobject, { authorId: req.body.tokenId }, { isDeleted: false }]})
+      // if (getData.length == 0) {
+      //    return res.status(404).send({ status: false, msg: "no such Blog" })
+      // }
 
       let updateData = await blogModel.updateMany(
-         { $and: [{ authorId: req.body.tokenId }, getobject] }, { $set: { isDeleted: true, deletedAt: Date.now() } },
+         { $and: [{ authorId: req.body.tokenId },{isDeleted:false}, getobject] }, { $set: { isDeleted: true, deletedAt: Date.now() } },
          { new: true })
-
-      res.status(200).send({ msg: updateData })
+         if(!updateData.modifiedCount)
+         return res.staus(400).send({status:false,msg:"no such blog"})
+      res.status(200).send({ status:true, msg: "numbers of delated blog="+updateData.modifiedCount})
    }
    catch (err) {
-      res.status(500).send({ msg: "server issue", detail: err.message })
+      res.status(500).send({ status:false, msg: err.message })
    }
 }
 
