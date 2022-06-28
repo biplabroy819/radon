@@ -2,6 +2,11 @@ const authorModel = require("../models/authorModel")
 const jwt = require("jsonwebtoken");
 
 
+
+
+
+
+//  ========================================== CREATE AUTHOR ====================================
 const createAuthor = async function (req, res) {
     try {
        let data = req.body
@@ -55,6 +60,14 @@ const createAuthor = async function (req, res) {
     }
  }
 
+
+
+
+
+ //  ========================================== LOG IN AUTHOR ====================================
+
+
+ 
  const loginAuthor = async function (req, res) {
     try {
        let data = req.body
@@ -83,7 +96,7 @@ const createAuthor = async function (req, res) {
              authorId: author._id.toString(),
              projectName: "blogging-site"
           },
-          "project1-group10"
+          "project1-group2"
        );
        res.setHeader("x-api-key", token);
        res.status(200).send({ status: true, data: token });

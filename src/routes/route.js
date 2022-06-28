@@ -4,24 +4,37 @@ const blogController=require("../controllers/blogController")
 const middleware=require("../middleware/auth")
 const authorController=require("../controllers/authorController")
 
+//DeStractaring---------
+
+let { authentication, Authorisation } = middleware;
+let{createBlog, getBlog,updateBlog,deleteBlogById,deleteBlogByParams} =blogController;
+let{createAuthor,loginAuthor} = authorController;
+
 
 // author controller
-router.post("/authors",authorController.createAuthor)
 
-router.post("/login",authorController.loginAuthor)
+// ---------- Create Author Api ---------
+router.post("/authors",createAuthor)
+
+// ---------- Login Author Api -----------
+router.post("/login",loginAuthor)
 
 
 //blog controller
- 
-router.post("/blogs",middleware.authentication,blogController.createBlog)
+ // ---------- Create Blog Api ------------
+router.post("/blogs",authentication,createBlog)
 
-router.get("/blogs",middleware.authentication,blogController.getBlog)
+// ---------- Get Blogs Api -------------
+router.get("/blogs",authentication,getBlog)
 
-router.put("/blogs/:blogId",middleware.authentication,middleware.Authorisation,blogController.updateBlog)
+// ------- Get Updated Blogs using blogId ------
+router.put("/blogs/:blogId",authentication,Authorisation,updateBlog)
 
-router.delete("/blogs/:blogId",middleware.authentication,middleware.Authorisation,blogController.deleteBlogById)
+// ---------- Delete Api ---------------
+router.delete("/blogs/:blogId",authentication,Authorisation,deleteBlogById)
 
-router.delete("/blogs",middleware.authentication,middleware.Authorisation,blogController.deleteBlogByParams)
+// ---------- Delete Blogs By Query ----------
+router.delete("/blogs",authentication,Authorisation,deleteBlogByParams)
 
 
 

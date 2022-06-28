@@ -4,6 +4,9 @@ const blogModel = require("../models/blogModel")
 
 
 
+
+//  ========================================== CREATE BLOCK ====================================
+
 const createBlog = async function (req, res) {
    try {
       let data = req.body
@@ -54,7 +57,7 @@ const createBlog = async function (req, res) {
    }
 }
 
-
+//  ========================================== GET BLOCK ====================================
 
 const getBlog = async function (req, res) {
    try {
@@ -70,37 +73,81 @@ const getBlog = async function (req, res) {
 }
 
 
+
+
+//  ========================================== UPDATE BLOCK ====================================
+
+
 const updateBlog = async function (req, res) {
    try {
-      let data = req.body
-      let tags = data.tags
-      let subcategory = data.subcategory
-      let blogId = req.params.blogId
-      let validBlog = await blogModel.findOne({ _id: blogId, isDeleted: false })
-      if (!mongoose.isValidObjectId(blogId)) return res.status(400).send({ status: false, msg: "invalid blog Id" })
-      if (!validBlog) return res.status(404).send({ status: false, msg: "no such Blog" })
+     let blogId = req.params.blogId;
+     let { title, body, tags, subCategory } = req.body;
+     const date = Date.now();
+ 
+     if (!blogId)
+       return res.status(404).send({
+         status: false,
+         msg: "Blog Is Not Found , Please Enter Valid Blog Id",
+       });
+ 
+     if (Object.keys(req.body).length == 0)
+       return res
+         .status(400)
+         .send({ status: false, msg: "Body Must be filled" });
+     if (title == 0)
+       return res
+         .status(400)
+         .send({ status: false, msg: "Value of the title must be present" });
+     if (body == 0)
+       return res
+         .status(400)
+         .send({ status: false, msg: "Value of the body must be present" });
+     if (tags == 0)
+       return res
+         .status(400)
+         .send({ status: false, msg: "Value of the tags must be present" });
+     if (subCategory == 0)
+       return res.status(400).send({
+         status: false,
+         msg: "Value of the subCategory must be present",
+       });
+     let updateQuery = {
+       title: title,
+       body: body,
+     };
+ 
+     let addQuery = { tags: tags, subCategory: subCategory };
+     const allBlogs = await blogModel.findOne({
+       $and: [{ isDeleted: false }, { isPublished: true }],
+     });
+     if (!allBlogs)
+       return res
+         .status(404)
+         .send({ status: false, msg: "No filter possible are available" });
+     console.log(allBlogs);
+ 
+     // WE ARE FINDING ONE BY BLOG ID AND UPDATING //
+     let updatedblog = await blogModel.findOneAndUpdate(
+       { _id: blogId },
+       { $set: updateQuery, $push: addQuery, publishedAt: date },
+       { new: true }
+     );
+     console.log(updatedblog);
+     res.status(200).send({
+       status: true,
+       msg: "Blog is Updated Successfully",
+       data: updatedblog,
+     });
+   } catch (err) {
+     res.status(500).send({ status: false, msg: err.message });
+   }
+ };
 
-      let updateBlog = await blogModel.findOneAndUpdate({
-         _id: blogId
-      }, {
-         $set: {
-            isPublished: true,
-            publishedAt: Date.now(),
-            body: data.body,
-            title: data.title
-         },
-         $push: {
-            tags, subcategory
-         }
-      }, {
-         new: true
-      })
-      res.status(201).send({ status: true, data: updateBlog })
-   }
-   catch (err) {
-      res.status(500).send({ status: false, msg: err.message })
-   }
-}
+
+
+//  ========================================== DELETE BLOCK ====================================
+
+
 
 
 const deleteBlogById = async function (req, res) {
@@ -121,6 +168,10 @@ const deleteBlogById = async function (req, res) {
    }
 }
 
+
+
+
+//  ========================================== DELETEBY QUARY BLOCK ====================================
 
 const deleteBlogByParams = async function (req, res) {
    try {

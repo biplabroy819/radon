@@ -9,7 +9,7 @@ const authentication = function (req, res, next) {
     if (!token) token = req.headers["x-api-key"];
     if (!token) return res.status(401).send({ status: false, msg: "token must be present" });
 
-    dToken = jwt.verify(token, "project1-group10");
+    dToken = jwt.verify(token, "project1-group2");
 
     if (!dToken) {
       return res.status(400).send({ status: false, msg: "token is invalid" })
@@ -54,6 +54,7 @@ const Authorisation = async function (req, res, next) {
 
   }
 }
+
 
 module.exports = { Authorisation, authentication }
 
