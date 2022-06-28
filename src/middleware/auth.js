@@ -48,11 +48,6 @@ const Authorisation = async function (req, res, next) {
       if(dToken.authorId!=auth.authorId)
       return res.status(404).send({status:false,msg:"unautorised"})
     }
-    console.log(dToken.authorId,auth)
-
-    // if (dToken.authorId.include(Object.values(auth)))
-    //   return res.status(401).send({ status: false, msg: "unauthorised" })
-
     next()
   } catch (err) {
     res.status(500).send({ status:false, msg: err.message })
